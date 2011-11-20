@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[the Central Coding Style]]></title>
   <link href="http://iwata.github.com/atom.xml" rel="self"/>
   <link href="http://iwata.github.com/"/>
-  <updated>2011-11-20T21:24:23+09:00</updated>
+  <updated>2011-11-20T21:32:22+09:00</updated>
   <id>http://iwata.github.com/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Motonori Iwata]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
