@@ -4,7 +4,7 @@
   <title><![CDATA[the Central Coding Style]]></title>
   <link href="http://iwata.github.com/atom.xml" rel="self"/>
   <link href="http://iwata.github.com/"/>
-  <updated>2011-11-20T21:32:22+09:00</updated>
+  <updated>2011-11-21T00:30:54+09:00</updated>
   <id>http://iwata.github.com/</id>
   <author>
     <name><![CDATA[Motonori Iwata]]></name>
@@ -12,5 +12,399 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Git Royale]]></title>
+    <link href="http://iwata.github.com/blog/2011/11/21/git-royale/"/>
+    <updated>2011-11-21T00:14:00+09:00</updated>
+    <id>http://iwata.github.com/blog/2011/11/21/git-royale</id>
+    <content type="html"><![CDATA[<h2>Summary</h2>
+
+<ol>
+<li>A successful branch management</li>
+<li><code>git-flow</code></li>
+<li>Some problems</li>
+<li>Solution
+
+<ul>
+<li><code>-R | --remote</code> option</li>
+</ul>
+</li>
+<li>Conclusion</li>
+<li>Do you have any questions?
+
+<ul>
+<li>with IRC(#git)</li>
+</ul>
+</li>
+<li>One more thing
+
+<ul>
+<li><code>git now</code></li>
+</ul>
+</li>
+</ol>
+
+
+<h2>A successful branch management</h2>
+
+<ul>
+<li><a href="http://nvie.com/posts/a-successful-git-branching-model/">http://nvie.com/posts/a-successful-git-branching-model/</a>
+
+<ul>
+<li><a href="http://keijinsonyaban.blogspot.com/2010/10/successful-git-branching-model.html">Japanese</a></li>
+</ul>
+</li>
+</ul>
+
+
+<p><img src="http://nvie.com/img/2009/12/Screen-shot-2009-12-24-at-11.32.03.png" alt="branch management" /></p>
+
+<h3>Why git?</h3>
+
+<ul>
+<li>Subversion is dead.</li>
+<li>Branching and merging are no longer something to be afraid of</li>
+</ul>
+
+
+<h3>Two main branches</h3>
+
+<ul>
+<li>Master
+
+<ul>
+<li>A production-ready state</li>
+</ul>
+</li>
+<li>Develop
+
+<ul>
+<li>for the next release</li>
+</ul>
+</li>
+</ul>
+
+
+<p><img src="http://nvie.com/img/2009/12/bm002.png" alt="Two main branches" /></p>
+
+<h3>Supporting three topic branches</h3>
+
+<ul>
+<li>Feature</li>
+<li>Release</li>
+<li>Hotfix</li>
+</ul>
+
+
+<h3>Feature branches</h3>
+
+<table>
+<thead>
+<tr>
+<th>branch off </th>
+<th> merge back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>delevelp   </td>
+<td> develop</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><img src="http://nvie.com/img/2009/12/fb.png" alt="Feature branches" /></p>
+
+<h3>Release branches</h3>
+
+<table>
+<thead>
+<tr>
+<th>branch off </th>
+<th> merge back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>develop   </td>
+<td> develop and master</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><img src="https://github.com/iwata/Git-royale/raw/master/rb.png" alt="Release branches" /></p>
+
+<h3>Hotfix branches</h3>
+
+<table>
+<thead>
+<tr>
+<th>branch off </th>
+<th> merge back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>master   </td>
+<td> develop and master</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><img src="http://nvie.com/img/2010/01/hotfix-branches1.png" alt="Hotfix branches" /></p>
+
+<h2><code>git-flow</code></h2>
+
+<p>Git extensions to provide high-level repository operations for the branching model</p>
+
+<p><a href="https://github.com/nvie/gitflow">https://github.com/nvie/gitflow</a></p>
+
+<pre><code>$ brew install git-flow
+</code></pre>
+
+<h3>Init</h3>
+
+<pre><code>$ git checkout -b develop origin/master
+$ git flow init
+</code></pre>
+
+<h3>Feature branches</h3>
+
+<ul>
+<li><p>Start feature branch</p>
+
+<pre><code>  $ git flow feature start smartphone-version
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b feature/smartphone-version develop
+</code></pre></li>
+<li><p>Finish feature branch</p>
+
+<pre><code>  $ git flow feature finish smartphone-version
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout develop
+  $ git merge --no-ff feature/smartphone-version
+  $ git branch -d feature/smartphone-version
+</code></pre></li>
+</ul>
+
+
+<h3>Release branches</h3>
+
+<ul>
+<li><p>Start release branch</p>
+
+<pre><code>  $ git flow release start 1.0
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b release/1.0 develop
+</code></pre></li>
+<li><p>Finish release branch</p>
+
+<pre><code>  $ git flow release finish 1.0
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout master
+  $ git merge --no-ff release/1.0
+  $ git tag -a 1.0
+  $ git checkout develop
+  $ git merge --no-ff release/1.0
+  $ git branch -d release/1.0
+</code></pre></li>
+</ul>
+
+
+<h3>Hotfix branches</h3>
+
+<ul>
+<li><p>Start hotfix branch</p>
+
+<pre><code>  $ git flow start 1.1
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b hotfix/1.1
+</code></pre></li>
+<li><p>Finish hotfix branch</p>
+
+<pre><code>  $ git flow finish 1.1
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout master
+  $ git merge --no-ff hotfix/1.1
+  $ git tag -a 1.1
+  $ git checkout develop
+  $ git merge --no-ff hotfix/1.1
+  $ git branch -d hotfix/1.1
+</code></pre></li>
+</ul>
+
+
+<h2>Some problems</h2>
+
+<p><code>git-flow</code> dose not concern for remote repository.
+Therefore, you need to sync to remote repository with hands.</p>
+
+<p><img src="http://blog-imgs-48-origin.fc2.com/s/o/c/socket283/20111028091114.jpg" alt="Chaos!" /></p>
+
+<h2>Solution</h2>
+
+<p><img src="http://cdn-ak.f.st-hatena.com/images/fotolife/a/appleappli/20090907/20090907192820.jpg" alt="Never give up" /></p>
+
+<p>Add <code>-R | --remote</code> option</p>
+
+<p><a href="https://github.com/iwata/gitflow">https://github.com/iwata/gitflow</a></p>
+
+<pre><code>$ brew install https://github.com/iwata/gitflow/raw/master/git-flow.rb
+</code></pre>
+
+<h3>Feature branches</h3>
+
+<ul>
+<li><p>Start feature branch</p>
+
+<pre><code>  $ git flow feature start -R smartphone-version2
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b feature/smartphone-version2 develop
+  $ git push -u origin feature/smartphone-version2
+</code></pre></li>
+<li><p>Finish feature branch</p>
+
+<pre><code>  $ git flow feature finish -R smartphone-version2
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout develop
+  $ git merge --no-ff feature/smartphone-version2
+  $ git branch -d feature/smartphone-version2
+  $ git push origin develop
+  $ git push origin :feature/smartphone-version2
+</code></pre></li>
+</ul>
+
+
+<h3>Release branches</h3>
+
+<ul>
+<li><p>Start release branch</p>
+
+<pre><code>  $ git flow release -R start 2.0
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b release/2.0 develop
+  $ git push -u origin release/2.0
+</code></pre></li>
+<li><p>Finish release branch</p>
+
+<pre><code>  $ git flow release finish -R 2.0
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout master
+  $ git merge --no-ff release/2.0
+  $ git tag -a 2.0
+  $ git checkout develop
+  $ git merge --no-ff release/2.0
+  $ git branch -d release/2.0
+  $ git push origin master
+  $ git push origin develop
+  $ git push --tags
+  $ git push origin :release/2.0
+</code></pre></li>
+</ul>
+
+
+<h3>Hotfix branches</h3>
+
+<ul>
+<li><p>Start hotfix branch</p>
+
+<pre><code>  $ git flow start -R 2.1
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout -b hotfix/2.1
+  $ git push -u origin hotfix/2.1
+</code></pre></li>
+<li><p>Finish hotfix branch</p>
+
+<pre><code>  $ git flow finish -R 2.1
+</code></pre>
+
+<p>  This means:</p>
+
+<pre><code>  $ git checkout master
+  $ git merge --no-ff hotfix/2.1
+  $ git tag -a 2.1
+  $ git checkout develop
+  $ git merge --no-ff hotfix/2.1
+  $ git branch -d hotfix/2.1
+  $ git push origin master
+  $ git push origin develop
+  $ git push --tags
+  $ git push origin :hotfix/20111201-1234
+</code></pre></li>
+</ul>
+
+
+<h2>Conclusion</h2>
+
+<ol>
+<li>Subversion is dead.</li>
+<li><code>git-flow</code> is very useful.
+
+<ul>
+<li>But it has some problems.</li>
+</ul>
+</li>
+<li>To use advanced <code>git-flow</code> is the solution.
+
+<ul>
+<li>Add <code>-R | --remote</code> option</li>
+</ul>
+</li>
+</ol>
+
+
+<h2>One more thing</h2>
+
+<p><code>git-now</code> is a command-line tool for light and temporary commit.
+It commits with a log message from time now and diff.</p>
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/sinsoku/20101208/1291770514">An original git-now idea</a> (by <a href="https://github.com/toshi-kawanishi">Toshiyuki Kawanishi</a>)</li>
+<li><p><a href="https://github.com/iwata/git-now">https://github.com/iwata/git-now</a></p>
+
+<pre><code>  $ brew install git-now
+  $ brew install --zsh-completion git-now
+</code></pre></li>
+</ul>
+
+]]></content>
+  </entry>
   
 </feed>
